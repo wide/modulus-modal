@@ -1,0 +1,22 @@
+{% set component = component | default('modal') %}
+{% set webcomponent = webcomponent | default(false) %}
+{% set classlist = { 
+  main:     'modal',
+  body:     'modal_body',
+  close:    'modal_close',
+  content:  'modal_content',
+  backdrop: 'modal_backdrop'
+} | merge(classlist | default({})) %}
+
+{% set tagstart = webcomponent ?: ('div is="' ~ component ~ '"') %}
+{% set tagend = webcomponent ?: 'div' %}
+
+<{{ tagstart }} class="{{ classlist.main }}{{ class }}" role="dialog" id="{{ id }}">
+  <div class="{{ classlist.body }}">
+    <button class="{{ classlist.close }}" data-modal.close></button>
+    <div class="{{ classlist.content }}">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  <div class="{{ classlist.backdrop }}" data-modal.close></div>
+</{{ tagend }}>

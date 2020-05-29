@@ -1,0 +1,100 @@
+$-class-main:      'modal' !default;
+$-class-body:      '_body' !default;
+$-class-close:     '_close' !default;
+$-class-content:   '_content' !default;
+$-class-backdrop:  '_backdrop' !default;
+$-class-active:    '-active' !default;
+$-class-open:      '-open' !default;
+
+$-z-index: 5000 !default;
+$-transition-speed: 400ms !default;
+$-close-content: '⨯' !default;
+$-close-position-top: -70px !default;
+$-close-position-right: -8px !default;
+$-close-color: white;
+$-body-transform-from: scale(.4) !default;
+$-body-transform-to: scale(1) !default;
+$-content-padding: 40px !default;
+$-backdrop-background: rgba(0, 0, 0, .85) !default;
+
+
+/**
+ * Main container of the modal, handle the opacity transtition
+ */
+.#{$-class-main} {
+  z-index: $-z-index;
+  position: fixed;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: all $-transition-speed;
+
+  /**
+   * Open state: appears in the DOM but kept invisible
+   */
+  &.#{$-class-open} {
+    display: flex;
+  }
+
+  /**
+   * Active state, when open, become visible
+   */
+  &.#{$-class-active} {
+    opacity: 1;
+  }
+
+  /**
+   * Background layer behind the content
+   */
+  &#{$-class-backdrop} {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: $-backdrop-background;
+  }
+
+  /**
+   * Body of the modal, contains the close button and the content
+   */
+  &#{$-class-body} {
+    position: relative;
+    z-index: 1;
+    transform: $-body-transform-from;
+    transition: all $-transition-speed;
+  }
+  &.#{$-class-active} &#{$-class-body} {
+    transform: $-body-transform-to;
+  }
+
+  /**
+   * Close button on the top-right corner
+   */
+  &#{$-class-close} {
+    position: absolute;
+    top: $-close-position-top;
+    right: $-close-position-right;
+    border: none;
+    padding: 0;
+    background: none;
+    font-size: 3em;
+    color: $-close-color;
+    cursor: pointer;
+    &::before {
+      content: $-close-content;
+    }
+  }
+
+  /**
+   * Content block where the HTML will take place
+   */
+  &#{$-class-content} {
+    padding: $-content-padding;
+    background: white;
+    max-width: 100%;
+  }
+}
