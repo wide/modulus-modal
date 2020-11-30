@@ -24,7 +24,7 @@ export const DEFAULT_CLASSLIST = {
  * Focusable element selector
  * @type {String}
  */
-export const FOCUSABLES = 'button:not([data-modal\\.close]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+export const FOCUSABLES = 'button:not([data-modal\\.close]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), button[data-modal\\.close]'
 
 
 /**
