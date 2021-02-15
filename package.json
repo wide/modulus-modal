@@ -1,6 +1,6 @@
 {
   "name": "@wide/modulus-modal",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "license": "MIT",
   "author": "Aymeric Assier (https://github.com/myeti)",
   "contributors": [
@@ -20,8 +20,8 @@
     "prepare": "rimraf lib/ && npm run build"
   },
   "dependencies": {
-    "@wide/dom-observer": "^2.0.0",
-    "@wide/modulus": "^2.0.0",
+    "@wide/dom-observer": "^2.0.1",
+    "@wide/modulus": "^2.0.4",
     "hotkeys-js": "^3.7.2"
   },
   "devDependencies": {
