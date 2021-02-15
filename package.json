@@ -1,6 +1,6 @@
 {
   "name": "@wide/modulus-modal",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "license": "MIT",
   "author": "Aymeric Assier (https://github.com/myeti)",
   "contributors": [
@@ -8,8 +8,8 @@
     "Julien Martins Da Costa (https://github.com/jdacosta)"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/wide/modulus-modal.git"
+    "type": "git",
+    "url": "https://github.com/wide/modulus-modal.git"
   },
   "main": "lib",
   "engines": {
@@ -20,8 +20,8 @@
     "prepare": "rimraf lib/ && npm run build"
   },
   "dependencies": {
-    "@wide/dom-observer": "^2.0.0",
-    "@wide/modulus": "^2.0.0",
+    "@wide/dom-observer": "^2.0.1",
+    "@wide/modulus": "^2.0.4",
     "hotkeys-js": "^3.7.2"
   },
   "devDependencies": {
