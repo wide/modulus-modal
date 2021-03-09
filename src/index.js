@@ -21,7 +21,13 @@ export const DEFAULT_CLASSLIST = {
 }
 
 /**
- * Focusable element selector
+ * Main focusable selector
+ * @type {String}
+ */
+export const FOCUSABLE_PRIORITY = '[data-focus]'
+
+/**
+ * Focusable element selectors
  * @type {String}
  */
 export const FOCUSABLES = 'button:not([data-modal\\.close]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), button[data-modal\\.close]'
@@ -136,12 +142,19 @@ export default class Modal extends Component {
 
 
   /**
-   * Set focus on the first focusable element
+   * Set focus on the main focusable element or first focusable element
    */
   setInnerFocus() {
-    const focusables = this.el.querySelectorAll(FOCUSABLES)
-    if(focusables.length) {
-      focusables[0].focus()
+    // Get main focusable element if defined
+    const focusable = this.el.querySelector(FOCUSABLE_PRIORITY)
+    if(focusable) {
+      focusable.focus()
+    } else {
+      // Or get first focusable element
+      const focusables = this.el.querySelectorAll(FOCUSABLES)
+      if(focusables.length) {
+        focusables[0].focus()
+      }
     }
   }
 
