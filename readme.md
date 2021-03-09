@@ -63,6 +63,24 @@ seek('modalOne').open()
 ```
 
 
+## Default focused element
+
+To choose which element will be focused when opening, add `data-focus` attribute:
+```html
+<button class="btn-primary" data-focus>Confirm</button>
+```
+
+By default, if there is no `data-focus` attribute defined, the first element of type above will be focused.
+
+ - `button` (excluding close button)
+ - `a` (with `[href]` attribute)
+ - `input`
+ - `select`
+ - `textarea`
+ - Element with `[tabindex]` attribute (with value different of `[tabindex="-1"]`)
+ - Close button
+
+
 ## Libraries
 
 This package uses :
