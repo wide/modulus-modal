@@ -107,7 +107,7 @@ export default class Modal extends Component {
 
     // spread event
     this.el.dispatchEvent(new CustomEvent('modal.open'))
-    this.emit('scroll.lock')
+    this.emit('scroll.lock', this.el)
 
     // set focus inside modal
     this.setInnerFocus()
