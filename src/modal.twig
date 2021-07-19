@@ -14,7 +14,7 @@
 <{{ tagstart }} class="{{ classlist.main }}{{ class }}" role="dialog" id="{{ id }}">
   <div class="{{ classlist.body }}">
     <button class="{{ classlist.close }}" data-modal.close></button>
-    <div class="{{ classlist.content }}">
+    <div class="{{ classlist.content }}" data-modal.content>
       {% block content %}{% endblock %}
     </div>
   </div>
