@@ -39,7 +39,7 @@ Or build your own `html`:
 <div class="modal" role="dialog" id="modalOne">
   <div class="modal_body">
     <button class="modal_close" data-modal.close></button>
-    <div class="modal_content">
+    <div class="modal_content" data-modal.content>
       HEY!
     </div>
   </div>
