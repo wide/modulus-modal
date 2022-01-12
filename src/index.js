@@ -60,6 +60,17 @@ export default class Modal extends Component {
     this.classlist = Object.assign({}, DEFAULT_CLASSLIST, classlist)
 
     /**
+     * Handlers for events
+     * @type {Object<string, Object>}
+     */
+    this.handlers = {
+      addFocusEvent: this.addFocusEvent.bind(this),
+      close: this.close.bind(this),
+      removeFocusEvent: this.removeFocusEvent.bind(this),
+      trapFocus: this.trapFocus.bind(this)
+    }
+
+    /**
      * Wether the modal is open or not
      * @type {Boolean}
      */
@@ -77,16 +88,19 @@ export default class Modal extends Component {
      */
     this.togglers = this.children(this.selectors.close)
 
-    // trap focus when open
-    document.addEventListener('focus', e => this.trapFocus(e), true)
-
-    // close en button click or backdrop click
+    // close on button click or backdrop click
     for(let i = this.togglers.length; i--;) {
-      this.togglers[i].addEventListener('click', e => this.close())
+      this.togglers[i].addEventListener('click', this.handlers.close)
     }
 
     // close on ESC keydown
-    hotkeys('esc', e => this.close())
+    hotkeys('esc', this.handlers.close)
+
+    // event for destroy focus 
+    this.on('modal.removeFocusEvent', this.handlers.removeFocusEvent)
+
+    // event in case it is the last open modal
+    this.el.addEventListener('modal.last-opened', this.handlers.addFocusEvent)
   }
 
 
@@ -95,11 +109,13 @@ export default class Modal extends Component {
    * @param {HTMLElement} src
    */
   open(src) {
-
     // ignore if already open
     if(this.isOpen) return;
     this.isOpen = true
     this.src = src
+
+    // added opening timestamp
+    this.el.setAttribute('data-modal.open-time', new Date().getTime())
 
     // open modal
     this.el.classList.add(this.classlist.open)
@@ -107,7 +123,11 @@ export default class Modal extends Component {
 
     // spread event
     this.el.dispatchEvent(new CustomEvent('modal.open'))
+    this.emit('modal.removeFocusEvent')
     this.emit('scroll.lock', this.child('[data-modal\\.content]'))
+
+    // trap focus when open
+    this.addFocusEvent()
 
     // set focus inside modal
     this.setInnerFocus()
@@ -118,12 +138,15 @@ export default class Modal extends Component {
    * Close modal
    */
   close() {
-
     // ignore if already close
     if(!this.isOpen) return;
     this.isOpen = false
 
+    // remove opening timestamp
+    this.el.removeAttribute('data-modal.open-time')
+
     // close modal
+    this.removeFocusEvent()
     this.el.classList.remove(this.classlist.active)
     setTimeout(() => {
 
@@ -138,6 +161,26 @@ export default class Modal extends Component {
         this.src = null
       }
     }, 400)
+
+    this.emitLastOpenedModal()
+  }
+
+
+  /**
+   * Emit an event to the last modal that is still open so that it
+   * can perform some actions necessary for its proper functioning
+   */
+   emitLastOpenedModal() {
+    const modalsOpened = [...document.querySelectorAll('[data-modal\\.open-time]')]
+
+    if(modalsOpened?.length) {
+      const el = modalsOpened?.reduce(
+        (previous, current) => previous.getAttribute('data-modal.open-time') > current.getAttribute('data-modal.open-time')
+          ? previous
+          : current
+      )
+      el?.dispatchEvent(new CustomEvent('modal.last-opened'))
+    }
   }
 
 
@@ -171,13 +214,38 @@ export default class Modal extends Component {
     }
   }
 
+  /**
+   * Add the `focus` event from the document
+   */
+   addFocusEvent() {
+    document.addEventListener('focus', this.handlers.trapFocus, true)
+  }
+
+
+  /**
+   * Remove the `focus` event from the document
+   */
+  removeFocusEvent() {
+    document.removeEventListener('focus', this.handlers.trapFocus, true)
+  }
+
 
   /**
    * Clear component
    */
   destroy() {
-    document.removeEventListener('focus', e => this.trapFocus(e), true)
-    hotkeys.unbind('esc', e => this.close())
+    this.removeFocusEvent()
+
+    this.off('modal.removeFocusEvent', this.handlers.removeFocusEvent)
+    this.el.removeEventListener('modal.last-opened', this.handlers.addFocusEvent)
+  
+    // remove listener on button click or backdrop click
+    for(let i = this.togglers.length; i--;) {
+      this.togglers[i].removeEventListener('click', this.handlers.close)
+    }
+
+    // unbind close on ESC keydown
+    hotkeys.unbind('esc', this.handlers.close)
   }
 
 }
