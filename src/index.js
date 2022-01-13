@@ -2,6 +2,11 @@ import Component  from '@wide/modulus/lib/component'
 import hotkeys    from 'hotkeys-js'
 import './data-open'
 
+/**
+ * Table containing the objects of the open modals and by order of opening
+ * @type {Array<Object>}
+ */
+const modalStack = []
 
 /**
  * Default elements selectors to interact with
@@ -100,7 +105,7 @@ export default class Modal extends Component {
     this.on('modal.removeFocusEvent', this.handlers.removeFocusEvent)
 
     // event in case it is the last open modal
-    this.el.addEventListener('modal.last-opened', this.handlers.addFocusEvent)
+    this.el.addEventListener('modal.lastOpened', this.handlers.addFocusEvent)
   }
 
 
@@ -114,8 +119,8 @@ export default class Modal extends Component {
     this.isOpen = true
     this.src = src
 
-    // added opening timestamp
-    this.el.setAttribute('data-modal.open-time', new Date().getTime())
+    // add the modal to the stack of open modals
+    modalStack.push(this.el)
 
     // open modal
     this.el.classList.add(this.classlist.open)
@@ -142,8 +147,9 @@ export default class Modal extends Component {
     if(!this.isOpen) return;
     this.isOpen = false
 
-    // remove opening timestamp
-    this.el.removeAttribute('data-modal.open-time')
+    // remove the modal to the stack of open modals
+    const index = modalStack.findIndex(o => Object.is(o, this.el))
+    modalStack.splice(index, 1)
 
     // close modal
     this.removeFocusEvent()
@@ -162,25 +168,9 @@ export default class Modal extends Component {
       }
     }, 400)
 
-    this.emitLastOpenedModal()
-  }
-
-
-  /**
-   * Emit an event to the last modal that is still open so that it
-   * can perform some actions necessary for its proper functioning
-   */
-   emitLastOpenedModal() {
-    const modalsOpened = [...document.querySelectorAll('[data-modal\\.open-time]')]
-
-    if(modalsOpened?.length) {
-      const el = modalsOpened?.reduce(
-        (previous, current) => previous.getAttribute('data-modal.open-time') > current.getAttribute('data-modal.open-time')
-          ? previous
-          : current
-      )
-      el?.dispatchEvent(new CustomEvent('modal.last-opened'))
-    }
+    // emit an event to the last modal that is still open so that it
+    // can perform some actions necessary for its proper functioning
+    modalStack.slice(-1)[0]?.dispatchEvent(new CustomEvent('modal.lastOpened'))
   }
 
 
@@ -234,12 +224,17 @@ export default class Modal extends Component {
    * Clear component
    */
   destroy() {
+    // remove the modal to the stack of open modals
+    const index = modalStack.findIndex(o => Object.is(o, this.el))
+    modalStack.splice(index, 1)
+
+    // remove the `focus` event from the document 
     this.removeFocusEvent()
 
+    // remove modal listener
     this.off('modal.removeFocusEvent', this.handlers.removeFocusEvent)
-    this.el.removeEventListener('modal.last-opened', this.handlers.addFocusEvent)
-  
-    // remove listener on button click or backdrop click
+    this.el.removeEventListener('modal.lastOpened', this.handlers.addFocusEvent)
+    
     for(let i = this.togglers.length; i--;) {
       this.togglers[i].removeEventListener('click', this.handlers.close)
     }
