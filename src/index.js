@@ -3,7 +3,7 @@ import hotkeys    from 'hotkeys-js'
 import './data-open'
 
 /**
- * Table containing the objects of the open modals and by order of opening
+ * Array containing the objects of the open modals and by order of opening
  * @type {Array<Object>}
  */
 const modalStack = []
@@ -234,7 +234,7 @@ export default class Modal extends Component {
     // remove modal listener
     this.off('modal.removeFocusEvent', this.handlers.removeFocusEvent)
     this.el.removeEventListener('modal.lastOpened', this.handlers.addFocusEvent)
-    
+
     for(let i = this.togglers.length; i--;) {
       this.togglers[i].removeEventListener('click', this.handlers.close)
     }
