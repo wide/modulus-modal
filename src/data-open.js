@@ -7,9 +7,11 @@ import Modal from './index'
  */
 observe('[data-modal]', {
   bind: el => {
-    el.addEventListener('click', e => {
-      const target = seek(el.dataset.modal)
-      if(target instanceof Modal) target.open()
+    el.addEventListener('click', () => {
+      const elementById = document.getElementById(el.dataset.modal)
+      const target = elementById ? elementById.__component : seek(el.dataset.modal)
+
+      if (target instanceof Modal) target.open();
     })
   }
 })

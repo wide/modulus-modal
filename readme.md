@@ -36,7 +36,7 @@ And use the provided `twig` template:
 
 Or build your own `html`:
 ```html
-<div class="modal" role="dialog" id="modalOne">
+<div class="modal" role="dialog" id="modalOne" is="modal">
   <div class="modal_body">
     <button class="modal_close" data-modal.close></button>
     <div class="modal_content" data-modal.content>
@@ -57,9 +57,17 @@ To open the modal from a button:
 
 To open the modal programmatically:
 ```js
+// By component's type
+
 import { seek } from '@wide/modulus'
 
-seek('modalOne').open()
+seek('modal').open()
+```
+Or :
+```js
+// By component's id
+
+document.getElementById('modalOne').__component.open()
 ```
 
 
